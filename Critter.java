@@ -11,6 +11,8 @@
  */
 package assignment4;
 
+import sun.font.TrueTypeFont;
+
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -30,7 +32,9 @@ public abstract class Critter {
 	}
 	
 	private static java.util.Random rand = new java.util.Random();
-	public static int getRandomInt(int max) {
+
+
+    public static int getRandomInt(int max) {
 		return rand.nextInt(max);
 	}
 	
@@ -47,12 +51,67 @@ public abstract class Critter {
 	
 	private int x_coord;
 	private int y_coord;
+    private boolean haveMoved;
+
+    protected final void changeCoordinates(int steps, int direction){
+        switch (direction) {
+            case 0:
+                this.x_coord += steps;
+                this.x_coord %= Params.world_width;
+                break;
+            case 1:
+                this.x_coord += steps;
+                this.x_coord %= Params.world_width;
+                this.y_coord -= steps;
+                this.y_coord %= Params.world_height;
+                break;
+            case 2:
+                this.y_coord -= steps;
+                this.y_coord %= Params.world_height;
+                break;
+            case 3:
+                this.x_coord -= steps;
+                this.x_coord %= Params.world_width;
+                this.y_coord -= steps;
+                this.y_coord %= Params.world_height;
+                break;
+            case 4:
+                this.x_coord -= steps;
+                this.x_coord %= Params.world_width;
+                break;
+            case 5:
+                this.x_coord -= steps;
+                this.x_coord %= Params.world_width;
+                this.y_coord += steps;
+                this.y_coord %= Params.world_height;
+                break;
+            case 6:
+                this.y_coord += steps;
+                this.y_coord %= Params.world_height;
+                break;
+            case 7:
+                this.x_coord += steps;
+                this.x_coord %= Params.world_width;
+                this.y_coord += steps;
+                this.y_coord %= Params.world_height;
+                break;
+        }
+    }
 	
 	protected final void walk(int direction) {
+        this.energy -= Params.walk_energy_cost;
+        if(!haveMoved) {
+            changeCoordinates(1, direction);
+            this.haveMoved = true;
+        }
 	}
 	
 	protected final void run(int direction) {
-		
+		this.energy -= Params.run_energy_cost;
+        if(!haveMoved) {
+            changeCoordinates(2, direction);
+            this.haveMoved = true;
+        }
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
@@ -72,6 +131,18 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+        try{
+            Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance();
+            newCritter.x_coord = getRandomInt(Params.world_width - 1);      //sets random x axis
+            newCritter.y_coord = getRandomInt(Params.world_height - 1);     // sets random y axis
+            newCritter.energy = Params.start_energy;                        // sets starting energy
+            CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
+
+        }
+        catch(Exception ex){
+            throw new InvalidCritterException(critter_class_name);
+        }
+
 	}
 	
 	/**
@@ -166,9 +237,17 @@ public abstract class Critter {
 	 * Clear the world of all critters, dead and alive
 	 */
 	public static void clearWorld() {
+        CritterWorld.livingCritters.clear();
 	}
 	
 	public static void worldTimeStep() {
+        for(Critter critter: CritterWorld.livingCritters){
+            critter.doTimeStep();
+            critter.haveMoved = false;
+            if (critter.energy == 0){
+                CritterWorld.livingCritters.remove(critter);
+            }
+        }
 	}
 	
 	public static void displayWorld() {}

@@ -15,5 +15,5 @@ package assignment4;
 import java.util.*;
 
 public class CritterLocation {
-	private static HashSet<Critter> crittersHere;
+	public static HashSet<Critter> crittersHere;
 }

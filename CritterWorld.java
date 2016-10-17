@@ -15,6 +15,12 @@ package assignment4;
 import java.util.*;
 
 public class CritterWorld {
-	private static HashSet<Critter> livingCritters;			// this hash set keeps track of all the critters alive at one time
-	private static CritterLocation[][] locationMatrix;		// this matrix keeps track of critters at each specific location
+	public static HashSet<Critter> livingCritters;			// this hash set keeps track of all the critters alive at one time
+	public static CritterLocation[][] locationMatrix;		// this matrix keeps track of critters at each specific location
+
+
+	CritterWorld(){
+		locationMatrix = new CritterLocation[Params.world_height][Params.world_width];
+	}
+
 }

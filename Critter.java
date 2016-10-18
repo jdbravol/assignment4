@@ -11,8 +11,6 @@
  */
 package assignment4;
 
-import sun.font.TrueTypeFont;
-
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -133,8 +131,8 @@ public abstract class Critter {
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
         try{
             Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance();
-            newCritter.x_coord = getRandomInt(Params.world_width - 1);      //sets random x axis
-            newCritter.y_coord = getRandomInt(Params.world_height - 1);     // sets random y axis
+            newCritter.x_coord = getRandomInt(Params.world_width);      //sets random x axis
+            newCritter.y_coord = getRandomInt(Params.world_height);     // sets random y axis
             newCritter.energy = Params.start_energy;                        // sets starting energy
             CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
 
@@ -249,6 +247,20 @@ public abstract class Critter {
             }
         }
 	}
-	
-	public static void displayWorld() {}
+	private static void topBottom(){
+		System.out.print("+");
+		for (int i = 0; i < Params.world_width; i++){
+			System.out.print("-");
+		}
+		System.out.println("+");
+	}
+	public static void displayWorld() {
+		topBottom();
+		for (int i = 0; i<Params.world_width + 2; i++){
+			System.out.print("|");
+
+		}
+		topBottom();
+
+	}
 }

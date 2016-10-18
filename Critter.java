@@ -206,7 +206,7 @@ public abstract class Critter {
 			return super.x_coord;
 		}
 		
-		protected int getY_coord() {
+		protected int getY_coord() { 	//gets the y coordinate of the critter
 			return super.y_coord;
 		}
 		

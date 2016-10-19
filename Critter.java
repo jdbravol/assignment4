@@ -301,6 +301,27 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
+		
+        try{
+        	// dynamically create class:
+            Critter givenCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); 
+            for(Critter maybeInstance: livingCritters){
+            	if(givenCritter.getClass().isInstance(maybeInstance)){
+            		result.add(maybeInstance);
+            	}
+            }
+            
+        }
+        // catch invalid critter errors
+        catch(ClassNotFoundException ex){
+            throw new InvalidCritterException(critter_class_name);
+        } 
+        catch (InstantiationException e) {
+            throw new InvalidCritterException(critter_class_name);
+        } 
+        catch (IllegalAccessException e) {
+            throw new InvalidCritterException(critter_class_name);
+        }
 	
 		return result;
 	}

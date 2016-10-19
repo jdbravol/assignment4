@@ -67,7 +67,6 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        CritterWorld world = new CritterWorld(); //initializes the world
         String input = kb.next();
         if (input.equals("quit")){          //if the command input in console is quit, terminates
             System.exit(0);

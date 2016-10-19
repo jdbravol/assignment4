@@ -11,6 +11,7 @@
  */
 package assignment4;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,12 @@ public abstract class Critter {
 	private static String myPackage;
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
+	
+	// this hash set keeps track of all the critters alive at one time
+	public static HashSet<Critter> livingCritters = new HashSet<Critter>(0);		
+	
+	// this matrix keeps track of critters at each specific location
+	public static HashSet<Critter>[][] locationMatrix = new HashSet[Params.world_height][Params.world_width];		
 
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
@@ -137,12 +144,13 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
         try{
-            Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); // dynamically create class
-            newCritter.x_coord = getRandomInt(Params.world_width);      	// sets random x axis
-            newCritter.y_coord = getRandomInt(Params.world_height);     	// sets random y axis
-            newCritter.energy = Params.start_energy;                        // sets starting energy
-            CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
-
+        	// dynamically create class:
+            Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); 
+            newCritter.x_coord = getRandomInt(Params.world_width);      				// sets random x axis
+            newCritter.y_coord = getRandomInt(Params.world_height);     				// sets random y axis
+            newCritter.energy = Params.start_energy;                        			// sets starting energy
+            livingCritters.add(newCritter);				                    			// adds to living hashset
+            locationMatrix[newCritter.y_coord][newCritter.x_coord].add(newCritter);		// add new critter to contents of such location
         }
         // catch invalid critter errors
         catch(ClassNotFoundException ex){
@@ -247,15 +255,74 @@ public abstract class Critter {
 	 * Clear the world of all critters, dead and alive
 	 */
 	public static void clearWorld() {
-        CritterWorld.livingCritters.clear();
+        livingCritters.clear();
 	}
 	
+	/**
+	 * @name worldTimeStep
+	 * @description goes through the seven necessary steps of the World Time Step
+	 * @param none
+	 * @return none
+	 */
 	public static void worldTimeStep() {
-        for(Critter critter: CritterWorld.livingCritters){
+		// 1: do everyone's time steps
+        for(Critter critter: livingCritters){
             critter.doTimeStep();
+        }
+        
+        // 2: resolve all encounters
+        resolveEncounters();
+        
+        // 3: update rest energy
+        for(Critter critter: livingCritters){
+            critter.energy -= Params.rest_energy_cost;
+        }
+        
+        // 4: generate algae
+        generateAlgae();
+        
+        // 5: move babies into population and clear babies list
+        for(Critter newBaby: babies){
+        	livingCritters.add(newBaby);
+        	locationMatrix[newBaby.y_coord][newBaby.x_coord].add(newBaby);
+        }
+        babies.clear();
+        
+        // 6: remove all dead
+        for(Critter maybeDeadCrit: livingCritters){
+        	if(maybeDeadCrit.energy <= 0){
+        		livingCritters.remove(maybeDeadCrit);
+        		locationMatrix[maybeDeadCrit.y_coord][maybeDeadCrit.x_coord].remove(maybeDeadCrit);
+        	}
+        }
+        
+        // 7: reset haveMoved
+        for(Critter critter: livingCritters){
             critter.haveMoved = false;
         }
 	}
+	
+	
+	/**
+	 * @name generateAlgae
+	 * @description creates algae for the world
+	 * @param none
+	 * @return none
+	 */
+	private static void generateAlgae(){
+	}
+	
+	
+	/**
+	 * @name resolveEncounters
+	 * @description resolves all encounters in the world
+	 * @param none
+	 * @return none
+	 */
+	private static void resolveEncounters(){
+	}
+	
+	
 
     /**
      * topBottom  will create the top and bottom lines of the world in the display
@@ -276,8 +343,8 @@ public abstract class Critter {
         for (int col = 0; col < Params.world_height+2; col++) {         //will go row by row outputting critter in location
             System.out.print("|");
             for (int row = 0; row < Params.world_width; row++) {
-                if (!CritterWorld.locationMatrix[row][col].crittersHere.isEmpty()){
-                    Iterator<Critter> singleCritterIterator = CritterWorld.locationMatrix[row][col].crittersHere.iterator();
+                if (!locationMatrix[row][col].isEmpty()){
+                    Iterator<Critter> singleCritterIterator = locationMatrix[row][col].iterator();
                     System.out.print(singleCritterIterator.next().toString());
                 }
                 else{

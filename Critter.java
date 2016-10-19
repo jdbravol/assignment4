@@ -144,6 +144,7 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
         try{
+
         	// dynamically create class:
             Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); 
             newCritter.x_coord = getRandomInt(Params.world_width);      				// sets random x axis
@@ -151,6 +152,7 @@ public abstract class Critter {
             newCritter.energy = Params.start_energy;                        			// sets starting energy
             livingCritters.add(newCritter);				                    			// adds to living hashset
             locationMatrix[newCritter.y_coord][newCritter.x_coord].add(newCritter);		// add new critter to contents of such location
+
         }
         // catch invalid critter errors
         catch(ClassNotFoundException ex){
@@ -261,8 +263,6 @@ public abstract class Critter {
 	/**
 	 * @name worldTimeStep
 	 * @description goes through the seven necessary steps of the World Time Step
-	 * @param none
-	 * @return none
 	 */
 	public static void worldTimeStep() {
 		// 1: do everyone's time steps

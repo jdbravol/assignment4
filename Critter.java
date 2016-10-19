@@ -220,7 +220,21 @@ public abstract class Critter {
      * @param direction
      */
 	protected final void reproduce(Critter offspring, int direction) {
-
+		// confirm parent has enough energy
+		if(this.energy < Params.min_reproduce_energy){
+			return;
+		}
+		
+		offspring.energy = this.energy / 2;						// assign offspring half of parent's energy (round down);
+		this.energy = (this.energy / 2) + (this.energy % 2);	// assign parent half of parent's energy (round up);
+		
+		// assign coordinates to child 
+		offspring.x_coord = this.x_coord;
+		offspring.y_coord = this.y_coord;
+		changeCoordinates(1, direction);
+		
+		// add offspring to array list
+		babies.add(offspring);
 	}
 
 	public abstract void doTimeStep();
@@ -408,7 +422,15 @@ public abstract class Critter {
 	 * @description creates algae for the world
 	 */
 	private static void generateAlgae(){
-        
+		for(int i = 0; i < Params.refresh_algae_count; i++){
+			Critter newAlgae = new Algae();
+			newAlgae.energy = Params.start_energy;
+			newAlgae.x_coord = Critter.getRandomInt(Params.world_width);
+			newAlgae.y_coord = Critter.getRandomInt(Params.world_height);
+			livingCritters.add(newAlgae);
+			locationMatrix[newAlgae.y_coord][newAlgae.x_coord].add(newAlgae);
+		}
+
 	}
 
 	/**
@@ -472,13 +494,11 @@ public abstract class Critter {
                         if (rollA >= rollB){
                             critterA.energy += (critterB.energy / 2);
                             critterB.energy = 0;
-                            livingInCell--;
                         }
 
                         else{
                             critterB.energy += (critterA.energy / 2);
                             critterA.energy = 0;
-                            livingInCell--;
                         }
                     }
 

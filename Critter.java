@@ -306,8 +306,6 @@ public abstract class Critter {
 	/**
 	 * @name generateAlgae
 	 * @description creates algae for the world
-	 * @param none
-	 * @return none
 	 */
 	private static void generateAlgae(){
 	}
@@ -316,8 +314,6 @@ public abstract class Critter {
 	/**
 	 * @name resolveEncounters
 	 * @description resolves all encounters in the world
-	 * @param none
-	 * @return none
 	 */
 	private static void resolveEncounters(){
 	}

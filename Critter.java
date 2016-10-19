@@ -107,6 +107,26 @@ public abstract class Critter {
                 break;
         }
     }
+    
+    /**
+     * @name checkDeath
+     * @description checks if cell is available for moving into during fight
+     * @param a cell in HashSet form
+     * @return boolean telling if available or not
+     */
+    private boolean checkDeath(HashSet<Critter> cell){
+    	if(cell.size() == 0){
+    		return true;
+    	}
+    	
+    	// check if all dead
+    	for(Critter checkIfDead: cell){
+    		if(checkIfDead.energy > 0){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
 
     /**
      * moveInFight will perform appropiate movement for object
@@ -114,14 +134,14 @@ public abstract class Critter {
     private void moveInFight(int steps, int direction){
         switch (direction) {
             case 0:
-                if (locationMatrix[this.y_coord][this.x_coord + 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord][this.x_coord + 1])) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.fightMoved = true;
                 }
                 break;
             case 1:
-                if (locationMatrix[this.y_coord - 1][this.x_coord + 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord + 1])) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord -= steps;
@@ -130,14 +150,14 @@ public abstract class Critter {
                 }
                 break;
             case 2:
-                if (locationMatrix[this.y_coord - 1][this.x_coord].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord])) {
                     this.y_coord -= steps;
                     this.y_coord %= Params.world_height;
                     this.fightMoved = true;
                 }
                 break;
             case 3:
-                if (locationMatrix[this.y_coord - 1][this.x_coord - 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord - 1])) {
                     this.x_coord -= steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord -= steps;
@@ -146,14 +166,14 @@ public abstract class Critter {
                 }
                 break;
             case 4:
-                if (locationMatrix[this.y_coord][this.x_coord - 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord][this.x_coord - 1])) {
                     this.x_coord -= steps;
                     this.x_coord %= Params.world_width;
                     this.fightMoved = true;
                 }
                 break;
             case 5:
-                if (locationMatrix[this.y_coord + 1][this.x_coord - 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord - 1])) {
                     this.x_coord -= steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord += steps;
@@ -162,14 +182,14 @@ public abstract class Critter {
                 }
                 break;
             case 6:
-                if (locationMatrix[this.y_coord + 1][this.x_coord].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord])) {
                     this.y_coord += steps;
                     this.y_coord %= Params.world_height;
                     this.fightMoved = true;
                 }
                 break;
             case 7:
-                if (locationMatrix[this.y_coord + 1][this.x_coord + 1].isEmpty()) {
+                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord + 1])) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord += steps;
@@ -440,9 +460,17 @@ public abstract class Critter {
 	private static void resolveEncounters(){
         inFight = true;         // set fighting
         for(int row = 0; row < Params.world_height; row++){
-            for (int col = 0; col <Params.world_width; col++){
-                while (locationMatrix[row][col].size()>1){
-                    Iterator<Critter> encounterIt = locationMatrix[row][col].iterator();
+            for (int col = 0; col < Params.world_width; col++){
+            	// extract all critters living in current cell
+            	HashSet<Critter> livingInCell = new HashSet<Critter>(0);
+            	HashSet<Critter> currentCell = locationMatrix[row][col];
+            	for(Critter maybeAlive: currentCell){
+            		if(maybeAlive.energy > 0){
+            			livingInCell.add(maybeAlive);
+            		}
+            	}
+                while (livingInCell.size() > 1){
+                    Iterator<Critter> encounterIt = livingInCell.iterator();
                     Critter critterA = encounterIt.next();
                     Critter critterB = encounterIt.next();
 
@@ -451,23 +479,33 @@ public abstract class Critter {
 
                     if (critterA.fightMoved || critterB.fightMoved){
                         if (critterA.fightMoved && critterB.fightMoved){
-                            locationMatrix[row][col].remove(critterA);
-                            locationMatrix[row][col].remove(critterB);
-                            break;
+                            livingInCell.remove(critterA);
+                            livingInCell.remove(critterB);
+                            continue;
                         }
                         else if (critterA.fightMoved){
-                            break;
+                        	livingInCell.remove(critterA);
+                        	continue;
+                        }
+                        else{
+                        	livingInCell.remove(critterB);
+                        	continue;
                         }
                     }
 
                     if (critterA.energy <= 0 || critterB.energy <= 0){
                         if (critterA.energy <= 0 && critterB.energy <=0){
-                            locationMatrix[row][col].remove(critterA);
-                            locationMatrix[row][col].remove(critterB);
-                            break;
+                            livingInCell.remove(critterA);
+                            livingInCell.remove(critterB);
+                            continue;
+                        }
+                        else if (critterA.energy <= 0){
+                        	livingInCell.remove(critterA);
+                        	continue;
                         }
                         else{
-                            break;
+                        	livingInCell.remove(critterB);
+                        	continue;
                         }
                     }
 
@@ -494,11 +532,15 @@ public abstract class Critter {
                         if (rollA >= rollB){
                             critterA.energy += (critterB.energy / 2);
                             critterB.energy = 0;
+                            livingInCell.remove(critterB);
+                            continue;
                         }
 
                         else{
                             critterB.energy += (critterA.energy / 2);
                             critterA.energy = 0;
+                            livingInCell.remove(critterA);
+                            continue;
                         }
                     }
 

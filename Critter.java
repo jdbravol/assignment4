@@ -311,11 +311,16 @@ public abstract class Critter {
 		}
 		
 		protected void setX_coord(int new_x_coord) {
+            locationMatrix[this.getY_coord()][this.getX_coord()].remove(this);
 			super.x_coord = new_x_coord;
+            locationMatrix[this.getY_coord()][this.getX_coord()].add(this);
 		}
 		
 		protected void setY_coord(int new_y_coord) {
+            locationMatrix[this.getY_coord()][this.getX_coord()].remove(this);
 			super.y_coord = new_y_coord;
+            locationMatrix[this.getY_coord()][this.getX_coord()].add(this);
+
 		}
 		
 		protected int getX_coord() {
@@ -403,6 +408,7 @@ public abstract class Critter {
 	 * @description creates algae for the world
 	 */
 	private static void generateAlgae(){
+        
 	}
 
 	/**

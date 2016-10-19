@@ -137,13 +137,14 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
         try{
-            Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance();
-            newCritter.x_coord = getRandomInt(Params.world_width);      //sets random x axis
-            newCritter.y_coord = getRandomInt(Params.world_height);     // sets random y axis
+            Critter newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); // dynamically create class
+            newCritter.x_coord = getRandomInt(Params.world_width);      	// sets random x axis
+            newCritter.y_coord = getRandomInt(Params.world_height);     	// sets random y axis
             newCritter.energy = Params.start_energy;                        // sets starting energy
             CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
 
         }
+        // catch invalid critter errors
         catch(ClassNotFoundException ex){
             throw new InvalidCritterException(critter_class_name);
         } catch (InstantiationException e) {

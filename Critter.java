@@ -11,6 +11,7 @@
  */
 package assignment4;
 
+import java.util.Iterator;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -111,8 +112,14 @@ public abstract class Critter {
             this.haveMoved = true;
         }
 	}
-	
+
+    /**
+     *
+     * @param offspring
+     * @param direction
+     */
 	protected final void reproduce(Critter offspring, int direction) {
+
 	}
 
 	public abstract void doTimeStep();
@@ -137,11 +144,15 @@ public abstract class Critter {
             CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
 
         }
-        catch(Exception ex){
+        catch(ClassNotFoundException ex){
+            throw new InvalidCritterException(critter_class_name);
+        } catch (InstantiationException e) {
+            throw new InvalidCritterException(critter_class_name);
+        } catch (IllegalAccessException e) {
             throw new InvalidCritterException(critter_class_name);
         }
 
-	}
+    }
 	
 	/**
 	 * Gets a list of critters of a specific type.
@@ -242,11 +253,12 @@ public abstract class Critter {
         for(Critter critter: CritterWorld.livingCritters){
             critter.doTimeStep();
             critter.haveMoved = false;
-            if (critter.energy == 0){
-                CritterWorld.livingCritters.remove(critter);
-            }
         }
 	}
+
+    /**
+     * topBottom  will create the top and bottom lines of the world in the display
+     */
 	private static void topBottom(){
 		System.out.print("+");
 		for (int i = 0; i < Params.world_width; i++){
@@ -254,12 +266,25 @@ public abstract class Critter {
 		}
 		System.out.println("+");
 	}
-	public static void displayWorld() {
-		topBottom();
-		for (int i = 0; i<Params.world_width + 2; i++){
-			System.out.print("|");
 
-		}
+    /**
+     * displayWorld will display in the console the critter world, it utilizes the matrix CritterWorld
+     */
+	public static void displayWorld() {
+		topBottom();        //header of the world
+        for (int col = 0; col < Params.world_height+2; col++) {         //will go row by row outputting critter in location
+            System.out.print("|");
+            for (int row = 0; row < Params.world_width; row++) {
+                if (!CritterWorld.locationMatrix[row][col].crittersHere.isEmpty()){
+                    Iterator<Critter> singleCritterIterator = CritterWorld.locationMatrix[row][col].crittersHere.iterator();
+                    System.out.print(singleCritterIterator.next().toString());
+                }
+                else{
+                    System.out.print(" ");
+                }
+            }
+            System.out.print("|");
+        }
 		topBottom();
 
 	}

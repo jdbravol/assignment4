@@ -67,20 +67,21 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
+        CritterWorld world = new CritterWorld(); //initializes the world
         String input = kb.next();
-        if (input.equals("quit")){
-            System.exit(1);
+        if (input.equals("quit")){          //if the command input in console is quit, terminates
+            System.exit(0);
         }
-        if (input.equals("show")){
+        if (input.equals("show")){          // will show the world
             Critter.displayWorld();
         }
-        if (input.equals("step")){
+        if (input.equals("step")){          //will invoke WorldTimeStep
             int steps;
-            if (kb.hasNext()){
+            if (kb.hasNext()){              //has a count
                 steps = kb.nextInt();
             }
             else { steps = 1; }
-            for (int i = 0; i < steps; i++){
+            for (int i = 0; i < steps; i++){      //worldTimeStep for specific amount of times
                 Critter.worldTimeStep();
             }
         }

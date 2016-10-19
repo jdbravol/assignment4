@@ -39,11 +39,11 @@ public class Main {
      * @param args args can be empty.  If not empty, provide two parameters -- the first is a file name, 
      * and the second is test (for test output, where all output to be directed to a String), or nothing.
      */
-    public static void main(String[] args) { 
+    public static void main(String[] args) throws InvalidCritterException {
         if (args.length != 0) {
             try {
                 inputFile = args[0];
-                kb = new Scanner(new File(inputFile));			
+                kb = new Scanner(new File(inputFile));
             } catch (FileNotFoundException e) {
                 System.out.println("USAGE: java Main OR java Main <input file> <test output>");
                 e.printStackTrace();
@@ -67,27 +67,46 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        String input = kb.next();
-        if (input.equals("quit")){          //if the command input in console is quit, terminates
-            System.exit(0);
-        }
-        if (input.equals("show")){          // will show the world
-            Critter.displayWorld();
-        }
-        if (input.equals("step")){          //will invoke WorldTimeStep
-            int steps;
-            if (kb.hasNext()){              //has a count
-                steps = kb.nextInt();
+        while (true) {
+            String input = kb.next();
+            if (input.equals("quit")) {          //if the command input in console is quit, terminates
+                System.exit(0);
             }
-            else { steps = 1; }
-            for (int i = 0; i < steps; i++){      //worldTimeStep for specific amount of times
-                Critter.worldTimeStep();
+            else if (input.equals("show")) {          // will show the world
+                Critter.displayWorld();
             }
-        }
+            else if (input.equals("step")) {          //will invoke WorldTimeStep
+                int steps;
+                if (kb.hasNextInt()) {              //has a count
+                    steps = kb.nextInt();
+                } else {
+                    steps = 1;
+                }
+                for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
+                    Critter.worldTimeStep();
+                }
+            }
+            else if (input.equals("seed")) {
+                Critter.setSeed(kb.nextInt());
+            }
+            else if (input.equals("make")){
+                String className = kb.next();
+                int countMakes;
+                if (kb.hasNextInt()){
+                    countMakes = kb.nextInt();
+                }
+                else {
+                    countMakes = 1;
+                }
+                for (int i = 0; i < countMakes; i++){
+                    Critter.makeCritter(className);
+                }
+            }
+            else if (input.equals("stats")){
 
-        
-        /* Write your code above */
-        System.out.flush();
+            }
+
+        }
 
     }
 }

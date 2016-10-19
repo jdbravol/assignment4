@@ -142,6 +142,7 @@ public abstract class Critter {
             newCritter.y_coord = getRandomInt(Params.world_height);     	// sets random y axis
             newCritter.energy = Params.start_energy;                        // sets starting energy
             CritterWorld.livingCritters.add(newCritter);                    // adds to living hashset
+            
 
         }
         // catch invalid critter errors

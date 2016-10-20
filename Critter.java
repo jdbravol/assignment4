@@ -97,25 +97,37 @@ public abstract class Critter {
                 this.x_coord += steps;
                 this.x_coord %= Params.world_width;
                 this.y_coord -= steps;
-                this.y_coord %= Params.world_height;
+                if(this.y_coord < 0){
+                	this.y_coord = Params.world_height - 1;
+                }
                 break;
             case 2:
                 this.y_coord -= steps;
-                this.y_coord %= Params.world_height;
+                if(this.y_coord < 0){
+                	this.y_coord = Params.world_height - 1;
+                }
                 break;
             case 3:
                 this.x_coord -= steps;
-                this.x_coord %= Params.world_width;
+                if(this.x_coord < 0){
+                	this.x_coord = Params.world_width - 1;
+                }
                 this.y_coord -= steps;
-                this.y_coord %= Params.world_height;
+                if(this.y_coord < 0){
+                	this.y_coord = Params.world_height - 1;
+                }
                 break;
             case 4:
                 this.x_coord -= steps;
-                this.x_coord %= Params.world_width;
+                if(this.x_coord < 0){
+                	this.x_coord = Params.world_width - 1;
+                }
                 break;
             case 5:
                 this.x_coord -= steps;
-                this.x_coord %= Params.world_width;
+                if(this.x_coord < 0){
+                	this.x_coord = Params.world_width - 1;
+                }
                 this.y_coord += steps;
                 this.y_coord %= Params.world_height;
                 break;
@@ -156,64 +168,127 @@ public abstract class Critter {
      * moveInFight will perform appropiate movement for object
      */
     private void moveInFight(int steps, int direction){
+    	int newX;
+    	int newY;
         switch (direction) {
             case 0:
-                if (checkDeath(locationMatrix[this.y_coord][this.x_coord + 1].inHere)) {
+            		newX = this.x_coord + steps;
+            		newX %= Params.world_width;
+            	
+                if (checkDeath(locationMatrix[this.y_coord][newX].inHere)) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.fightMoved = true;
                 }
                 break;
             case 1:
-                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord + 1].inHere)) {
+            		newX = this.x_coord + steps;
+            		newX %= Params.world_width;
+            	
+            		newY = this.y_coord - steps;
+            		if(newY < 0){
+            			newY = Params.world_height - 1;
+                }
+            		
+                if (checkDeath(locationMatrix[newY][newX].inHere)) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord -= steps;
-                    this.y_coord %= Params.world_height;
+                    if(this.y_coord < 0){
+                    	this.y_coord = Params.world_height - 1;
+                    }
                     this.fightMoved = true;
                 }
                 break;
             case 2:
-                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord].inHere)) {
+            		newY = this.y_coord - steps;
+            		if(newY < 0){
+            			newY = Params.world_height - 1;
+                }
+            		
+                if (checkDeath(locationMatrix[newY][this.x_coord].inHere)) {
                     this.y_coord -= steps;
-                    this.y_coord %= Params.world_height;
+                    if(this.y_coord < 0){
+                    	this.y_coord = Params.world_height - 1;
+                    }
                     this.fightMoved = true;
                 }
                 break;
             case 3:
-                if (checkDeath(locationMatrix[this.y_coord - 1][this.x_coord - 1].inHere)) {
+            		newX = this.x_coord - steps;
+            		if(newX < 0){
+            			newX = Params.world_width - 1;
+                }
+            	
+            		newY = this.y_coord - steps;
+            		if(newY < 0){
+            			newY = Params.world_height - 1;
+                }
+            		
+                if (checkDeath(locationMatrix[newY][newX].inHere)) {
                     this.x_coord -= steps;
-                    this.x_coord %= Params.world_width;
+                    if(this.x_coord < 0){
+                    	this.x_coord = Params.world_width - 1;
+                    }
+                    
                     this.y_coord -= steps;
-                    this.y_coord %= Params.world_height;
+                    if(this.y_coord < 0){
+                    	this.y_coord = Params.world_height - 1;
+                    }
                     this.fightMoved = true;
                 }
                 break;
             case 4:
-                if (checkDeath(locationMatrix[this.y_coord][this.x_coord - 1].inHere)) {
+            		newX = this.x_coord - steps;
+            		if(newX < 0){
+            			newX = Params.world_width - 1;
+                }
+            	
+                if (checkDeath(locationMatrix[this.y_coord][newX].inHere)) {
                     this.x_coord -= steps;
-                    this.x_coord %= Params.world_width;
+                    if(this.x_coord < 0){
+                    	this.x_coord = Params.world_width - 1;
+                    }
                     this.fightMoved = true;
                 }
                 break;
             case 5:
-                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord - 1].inHere)) {
+            		newX = this.x_coord - steps;
+                if(newX < 0){
+                		newX = Params.world_width - 1;
+                }
+                
+                newY = this.y_coord + steps;
+                newY %= Params.world_height;
+            	
+                if (checkDeath(locationMatrix[newY][newX].inHere)) {
                     this.x_coord -= steps;
-                    this.x_coord %= Params.world_width;
+                    if(this.x_coord < 0){
+                    	this.x_coord = Params.world_width - 1;
+                    }
                     this.y_coord += steps;
                     this.y_coord %= Params.world_height;
                     this.fightMoved = true;
                 }
                 break;
             case 6:
-                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord].inHere)) {
+            		newY = this.y_coord + steps;
+                newY %= Params.world_height;
+            	
+                if (checkDeath(locationMatrix[newY][this.x_coord].inHere)) {
                     this.y_coord += steps;
                     this.y_coord %= Params.world_height;
                     this.fightMoved = true;
                 }
                 break;
             case 7:
-                if (checkDeath(locationMatrix[this.y_coord + 1][this.x_coord + 1].inHere)) {
+            		newX = this.x_coord + steps;
+                newX %= Params.world_width;
+                
+                newY = this.y_coord + steps;
+                newY %= Params.world_height;
+            	
+                if (checkDeath(locationMatrix[newY][newX].inHere)) {
                     this.x_coord += steps;
                     this.x_coord %= Params.world_width;
                     this.y_coord += steps;
@@ -329,7 +404,10 @@ public abstract class Critter {
         try{
         	// dynamically create class:
             Critter givenCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); 
-            for(Critter maybeInstance: livingCritters){
+            Iterator<Critter> instanceIterator = livingCritters.iterator();
+            Critter maybeInstance;
+            while(instanceIterator.hasNext()){
+            	maybeInstance = instanceIterator.next();
             	if(givenCritter.getClass().isInstance(maybeInstance)){
             		result.add(maybeInstance);
             	}
@@ -436,7 +514,7 @@ public abstract class Critter {
 	 */
 	public static void clearWorld() {
         livingCritters.clear();
-        locationMatrix = new Locations[Params.world_height][Params.world_width];
+        locationMatrix = locationMatrixInit();
 	}
 	
 	/**
@@ -461,17 +539,24 @@ public abstract class Critter {
         generateAlgae();
         
         // 5: move babies into population and clear babies list
-        for(Critter newBaby: babies){
+        Iterator<Critter> babyIterator = babies.iterator();
+        Critter newBaby;
+        while(babyIterator.hasNext()){
+        	newBaby = babyIterator.next();
         	livingCritters.add(newBaby);
         	locationMatrix[newBaby.y_coord][newBaby.x_coord].inHere.add(newBaby);
         }
         babies.clear();
         
         // 6: remove all dead
-        for(Critter maybeDeadCrit: livingCritters){
+        Iterator<Critter> livingIterator = livingCritters.iterator();
+        Critter maybeDeadCrit;
+        while(livingIterator.hasNext()){
+        	maybeDeadCrit = livingIterator.next();
         	if(maybeDeadCrit.energy <= 0){
         		livingCritters.remove(maybeDeadCrit);
         		locationMatrix[maybeDeadCrit.y_coord][maybeDeadCrit.x_coord].inHere.remove(maybeDeadCrit);
+        		livingIterator = livingCritters.iterator();
         	}
         }
         

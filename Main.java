@@ -114,17 +114,22 @@ public class Main {
 	                }
 	            }
 	            else if (input.equals("stats")){
-	            	try{
-		            	String className = kb.next();
-		            	java.util.List<Critter> instanceList = Critter.getInstances(className);		// get all instances
-		            	String usedPackage = Critter.class.getPackage().toString().split(" ")[1];	// get package
-		            	Critter plainCritter = (Critter) Class.forName(usedPackage + "." + className).newInstance();
-		            	Class<?> critterClass = plainCritter.getClass();
-		            	Method method = critterClass.getMethod("runStats", List.class);			// get runstats method
-		            	method.invoke(null, instanceList);
-	            	}
-	            	catch(NoSuchMethodException e){
-	            		System.out.println("Method not found");
+					java.util.List<Critter> instanceList = new java.util.ArrayList<Critter>();
+					String className = kb.next();
+					try {
+						instanceList = Critter.getInstances(className);
+					}
+					catch (InvalidCritterException e) {
+						System.out.println("error processing: " + input);
+					}
+
+					try {
+						Class<?> critterClass = Class.forName(myPackage + "." + className);
+						Method method = critterClass.getMethod("runStats", List.class);
+						method.invoke(critterClass, instanceList);
+					}
+					catch (IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException e){
+						System.out.println("error processing: " + input);
 	            	}
 	            }
 	

@@ -48,7 +48,7 @@ public class Main {
      * @throws IllegalArgumentException 
      * @throws IllegalAccessException 
      */
-    public static void main(String[] args) throws InvalidCritterException, NoSuchMethodException, SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public static void main(String[] args){
         if (args.length != 0) {
             try {
                 inputFile = args[0];
@@ -76,51 +76,55 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        while (true) {
-            String input = kb.next();
-           
-            if (input.equals("quit")) {          	  //if the command input in console is quit, terminates
-                break;
-            }
-            else if (input.equals("show")) {          // will show the world
-                Critter.displayWorld();
-            }
-            else if (input.equals("step")) {          //will invoke WorldTimeStep
-                int steps;
-                if (kb.hasNextInt()) {                //has a count
-                    steps = kb.nextInt();
-                } else {
-                    steps = 1;
-                }
-                for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
-                    Critter.worldTimeStep();
-                }
-            }
-            else if (input.equals("seed")) {
-                Critter.setSeed(kb.nextInt());
-            }
-            else if (input.equals("make")){
-                String className = kb.next();
-                int countMakes;
-                if (kb.hasNextInt()){
-                    countMakes = kb.nextInt();
-                }
-                else {
-                    countMakes = 1;
-                }
-                for (int i = 0; i < countMakes; i++){
-                    Critter.makeCritter(className);
-                }
-            }
-            else if (input.equals("stats")){
-            	String className = kb.next();
-            	java.util.List<Critter> instanceList = Critter.getInstances(className);		// get all instances
-            	String usedPackage = Critter.class.getPackage().toString().split(" ")[1];	// get package
-            	Method method = Class.forName(usedPackage + "." + className).getMethod("runStats", List.class);	// get runstats method
-            	method.invoke(null, instanceList);
-            }
-
+        try{
+	        while (true) {
+	            String input = kb.next();
+	           
+	            if (input.equals("quit")) {          	  //if the command input in console is quit, terminates
+	                break;
+	            }
+	            else if (input.equals("show")) {          // will show the world
+	                Critter.displayWorld();
+	            }
+	            else if (input.equals("step")) {          //will invoke WorldTimeStep
+	                int steps;
+	                if (kb.hasNextInt()) {                //has a count
+	                    steps = kb.nextInt();
+	                } else {
+	                    steps = 1;
+	                }
+	                for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
+	                    Critter.worldTimeStep();
+	                }
+	            }
+	            else if (input.equals("seed")) {
+	                Critter.setSeed(kb.nextInt());
+	            }
+	            else if (input.equals("make")){
+	                String className = kb.next();
+	                int countMakes;
+	                if (kb.hasNextInt()){
+	                    countMakes = kb.nextInt();
+	                }
+	                else {
+	                    countMakes = 1;
+	                }
+	                for (int i = 0; i < countMakes; i++){
+	                    Critter.makeCritter(className);
+	                }
+	            }
+	            else if (input.equals("stats")){
+	            	String className = kb.next();
+	            	java.util.List<Critter> instanceList = Critter.getInstances(className);		// get all instances
+	            	String usedPackage = Critter.class.getPackage().toString().split(" ")[1];	// get package
+	            	Method method = Class.forName(usedPackage + "." + className).getMethod("runStats", List.class);	// get runstats method
+	            	method.invoke(null, instanceList);
+	            }
+	
+	        }
+    	}
+        catch(Exception e){
+        	;
         }
-
     }
 }

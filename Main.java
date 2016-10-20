@@ -114,17 +114,24 @@ public class Main {
 	                }
 	            }
 	            else if (input.equals("stats")){
-	            	String className = kb.next();
-	            	java.util.List<Critter> instanceList = Critter.getInstances(className);		// get all instances
-	            	String usedPackage = Critter.class.getPackage().toString().split(" ")[1];	// get package
-	            	Method method = Class.forName(usedPackage + "." + className).getMethod("runStats", List.class);	// get runstats method
-	            	method.invoke(null, instanceList);
+	            	try{
+		            	String className = kb.next();
+		            	java.util.List<Critter> instanceList = Critter.getInstances(className);		// get all instances
+		            	String usedPackage = Critter.class.getPackage().toString().split(" ")[1];	// get package
+		            	Critter plainCritter = (Critter) Class.forName(usedPackage + "." + className).newInstance();
+		            	Class<?> critterClass = plainCritter.getClass();
+		            	Method method = critterClass.getMethod("runStats", List.class);			// get runstats method
+		            	method.invoke(null, instanceList);
+	            	}
+	            	catch(NoSuchMethodException e){
+	            		System.out.println("Method not found");
+	            	}
 	            }
 	
 	        }
     	}
         catch(Exception e){
-        	;
+        	System.out.println("ERROR!!!!");
         }
     }
 }

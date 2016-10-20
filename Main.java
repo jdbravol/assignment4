@@ -10,6 +10,7 @@
  * Fall 2016
  */
 package assignment4; // cannot be in default package
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import java.awt.List;
@@ -48,95 +49,90 @@ public class Main {
      * @throws IllegalArgumentException 
      * @throws IllegalAccessException 
      */
-    public static void main(String[] args){
-        if (args.length != 0) {
-            try {
-                inputFile = args[0];
-                kb = new Scanner(new File(inputFile));
-            } catch (FileNotFoundException e) {
-                System.out.println("USAGE: java Main OR java Main <input file> <test output>");
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                System.out.println("USAGE: java Main OR java Main <input file>  <test output>");
-            }
-            if (args.length >= 2) {
-                if (args[1].equals("test")) { // if the word "test" is the second argument to java
-                    // Create a stream to hold the output
-                    testOutputString = new ByteArrayOutputStream();
-                    PrintStream ps = new PrintStream(testOutputString);
-                    // Save the old System.out.
-                    old = System.out;
-                    // Tell Java to use the special stream; all console output will be redirected here from now
-                    System.setOut(ps);
-                }
-            }
-        } else { // if no arguments to main
-            kb = new Scanner(System.in); // use keyboard and console
-        }
+    public static void main(String[] args) {
+		if (args.length != 0) {
+			try {
+				inputFile = args[0];
+				kb = new Scanner(new File(inputFile));
+			} catch (FileNotFoundException e) {
+				System.out.println("USAGE: java Main OR java Main <input file> <test output>");
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				System.out.println("USAGE: java Main OR java Main <input file>  <test output>");
+			}
+			if (args.length >= 2) {
+				if (args[1].equals("test")) { // if the word "test" is the second argument to java
+					// Create a stream to hold the output
+					testOutputString = new ByteArrayOutputStream();
+					PrintStream ps = new PrintStream(testOutputString);
+					// Save the old System.out.
+					old = System.out;
+					// Tell Java to use the special stream; all console output will be redirected here from now
+					System.setOut(ps);
+				}
+			}
+		} else { // if no arguments to main
+			kb = new Scanner(System.in); // use keyboard and console
+		}
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        try{
-	        while (true) {
-	            String input = kb.next();
-	           
-	            if (input.equals("quit")) {          	  //if the command input in console is quit, terminates
-	                break;
-	            }
-	            else if (input.equals("show")) {          // will show the world
-	                Critter.displayWorld();
-	            }
-	            else if (input.equals("step")) {          //will invoke WorldTimeStep
-	                int steps;
-	                if (kb.hasNextInt()) {                //has a count
-	                    steps = kb.nextInt();
-	                } else {
-	                    steps = 1;
-	                }
-	                for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
-	                    Critter.worldTimeStep();
-	                }
-	            }
-	            else if (input.equals("seed")) {
-	                Critter.setSeed(kb.nextInt());
-	            }
-	            else if (input.equals("make")){
-	                String className = kb.next();
-	                int countMakes;
-	                if (kb.hasNextInt()){
-	                    countMakes = kb.nextInt();
-	                }
-	                else {
-	                    countMakes = 1;
-	                }
-	                for (int i = 0; i < countMakes; i++){
-	                    Critter.makeCritter(className);
-	                }
-	            }
-	            else if (input.equals("stats")){
-					java.util.List<Critter> instanceList = new java.util.ArrayList<Critter>();
-					String className = kb.next();
-					try {
-						instanceList = Critter.getInstances(className);
+		try {
+			while (true) {
+				String input = kb.next();
+
+				if (input.equals("quit")) {              //if the command input in console is quit, terminates
+					break;
+				} else if (input.equals("show")) {          // will show the world
+					Critter.displayWorld();
+				} else if (input.equals("step")) {          //will invoke WorldTimeStep
+					int steps;
+					if (kb.hasNextInt()) {                //has a count
+						steps = kb.nextInt();
+					} else {
+						steps = 1;
 					}
-					catch (InvalidCritterException e) {
-						System.out.println("error processing: " + input);
+					for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
+						Critter.worldTimeStep();
+					}
+				} else if (input.equals("seed")) {
+					Critter.setSeed(kb.nextInt());
+				} else if (input.equals("make")) {
+					String className = kb.next();
+					int countMakes;
+					if (kb.hasNextInt()) {
+						countMakes = kb.nextInt();
+					} else {
+						countMakes = 1;
+					}
+					for (int i = 0; i < countMakes; i++) {
+						Critter.makeCritter(className);
+					}
+				} else if (input.equals("stats")) {
+					try {
+						String crit = kb.next();
+						Class<?> critterClass = Class.forName(myPackage + "." + crit);
+						java.util.List<Critter> critters = Critter.getInstances(myPackage + "." + crit);
+						try {
+							Method method = critterClass.getMethod("runStats", List.class);
+							method.invoke(critterClass, critters);
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						} catch (NoSuchMethodException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					} catch (InvalidCritterException e) {
+						e.printStackTrace();
 					}
 
-					try {
-						Class<?> critterClass = Class.forName(myPackage + "." + className);
-						Method method = critterClass.getMethod("runStats", List.class);
-						method.invoke(critterClass, instanceList);
-					}
-					catch (IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException e){
-						System.out.println("error processing: " + input);
-	            	}
-	            }
-	
-	        }
-    	}
-        catch(Exception e){
-        	System.out.println("ERROR!!!!");
-        }
-    }
+				}
+			}
+		} catch (InvalidCritterException e) {
+			e.printStackTrace();
+		}
+	}
 }

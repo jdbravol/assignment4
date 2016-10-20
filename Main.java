@@ -11,11 +11,11 @@
  */
 package assignment4; // cannot be in default package
 import java.util.Scanner;
+
 import java.awt.List;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 
 /*
  * Usage: java <pkgname>.Main <input file> test
@@ -78,15 +78,16 @@ public class Main {
         /* Write your code below. */
         while (true) {
             String input = kb.next();
-            if (input.equals("quit")) {          //if the command input in console is quit, terminates
-                System.exit(0);
+           
+            if (input.equals("quit")) {          	  //if the command input in console is quit, terminates
+                break;
             }
             else if (input.equals("show")) {          // will show the world
                 Critter.displayWorld();
             }
             else if (input.equals("step")) {          //will invoke WorldTimeStep
                 int steps;
-                if (kb.hasNextInt()) {              //has a count
+                if (kb.hasNextInt()) {                //has a count
                     steps = kb.nextInt();
                 } else {
                     steps = 1;

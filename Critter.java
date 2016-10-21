@@ -147,7 +147,7 @@ public abstract class Critter {
     /**
      * @name checkDeath
      * @description checks if cell is available for moving into during fight
-     * @param a cell in HashSet form
+     * @param cell in HashSet form
      * @return boolean telling if available or not
      */
     private boolean checkDeath(HashSet<Critter> cell){
@@ -272,7 +272,7 @@ public abstract class Critter {
                 }
                 break;
             case 6:
-            		newY = this.y_coord + steps;
+                newY = this.y_coord + steps;
                 newY %= Params.world_height;
             	
                 if (checkDeath(locationMatrix[newY][this.x_coord].inHere)) {
@@ -282,7 +282,7 @@ public abstract class Critter {
                 }
                 break;
             case 7:
-            		newX = this.x_coord + steps;
+                newX = this.x_coord + steps;
                 newX %= Params.world_width;
                 
                 newY = this.y_coord + steps;
@@ -400,31 +400,21 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-		
         try{
         	// dynamically create class:
-            Critter givenCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance(); 
-            Iterator<Critter> instanceIterator = livingCritters.iterator();
-            Critter maybeInstance;
-            while(instanceIterator.hasNext()){
-            	maybeInstance = instanceIterator.next();
-            	if(givenCritter.getClass().isInstance(maybeInstance)){
-            		result.add(maybeInstance);
-            	}
+            for (Critter maybeInstance: livingCritters){
+            Class givenCritter = Class.forName(critter_class_name);
+                if (givenCritter.isInstance(maybeInstance)) {
+                    result.add(maybeInstance);
+                 }
+
             }
             
         }
         // catch invalid critter errors
-        catch(ClassNotFoundException ex){
-            throw new InvalidCritterException(critter_class_name);
-        } 
-        catch (InstantiationException e) {
-            throw new InvalidCritterException(critter_class_name);
-        } 
-        catch (IllegalAccessException e) {
+        catch(ClassNotFoundException ex) {
             throw new InvalidCritterException(critter_class_name);
         }
-	
 		return result;
 	}
 	

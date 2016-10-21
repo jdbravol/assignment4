@@ -10,10 +10,8 @@
  * Fall 2016
  */
 package assignment4; // cannot be in default package
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-
-import java.awt.List;
+import java.util.List;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,6 +21,7 @@ import java.lang.reflect.Method;
  * input file is optional.  If input file is specified, the word 'test' is optional.
  * May not use 'test' argument without specifying input file.
  */
+
 public class Main {
 
     static Scanner kb;	// scanner connected to keyboard input, or input file
@@ -41,13 +40,7 @@ public class Main {
     /**
      * Main method.
      * @param args args can be empty.  If not empty, provide two parameters -- the first is a file name, 
-     * and the second is test (for test output, where all output to be directed to a String), or nothing.
-     * @throws ClassNotFoundException 
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
+     * and the second is test (for test output, where all output to be directed to a String), or nothing
      */
     public static void main(String[] args) {
 		if (args.length != 0) {
@@ -87,7 +80,7 @@ public class Main {
 					Critter.displayWorld();
 				} else if (input.equals("step")) {          //will invoke WorldTimeStep
 					int steps;
-					if (kb.hasNextInt()) {                //has a count
+					if (kb.hasNext()) {                //has a count
 						steps = kb.nextInt();
 					} else {
 						steps = 1;
@@ -116,16 +109,10 @@ public class Main {
 						try {
 							Method method = critterClass.getMethod("runStats", List.class);
 							method.invoke(critterClass, critters);
-						} catch (InvocationTargetException e) {
-							e.printStackTrace();
-						} catch (NoSuchMethodException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
+						} catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 							e.printStackTrace();
 						}
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					} catch (InvalidCritterException e) {
+					} catch (ClassNotFoundException | InvalidCritterException e) {
 						e.printStackTrace();
 					}
 

@@ -72,38 +72,39 @@ public class Main {
         /* Write your code below. */
 		try {
 			while (true) {
-				String input = kb.next();
+				String inputLine = kb.nextLine();
+				String[] inputs = inputLine.split(" ");
 
-				if (input.equals("quit")) {              //if the command input in console is quit, terminates
+				if (inputs[0].equals("quit")) {              //if the command input in console is quit, terminates
 					break;
-				} else if (input.equals("show")) {          // will show the world
+				} else if (inputs[0].equals("show")) {          // will show the world
 					Critter.displayWorld();
-				} else if (input.equals("step")) {          //will invoke WorldTimeStep
+				} else if (inputs[0].equals("step")) {          //will invoke WorldTimeStep
 					int steps;
-					if (kb.hasNext()) {                //has a count
-						steps = kb.nextInt();
+					if (inputLine.length() == 2) {                //has a count
+						steps = Integer.parseInt(inputs[1]);
 					} else {
 						steps = 1;
 					}
 					for (int i = 0; i < steps; i++) {      //worldTimeStep for specific amount of times
 						Critter.worldTimeStep();
 					}
-				} else if (input.equals("seed")) {
-					Critter.setSeed(kb.nextInt());
-				} else if (input.equals("make")) {
-					String className = kb.next();
+				} else if (inputs[0].equals("seed")) {
+					Critter.setSeed(Integer.parseInt(inputs[1]));
+				} else if (inputs[0].equals("make")) {
+					String className = inputs[1];
 					int countMakes;
-					if (kb.hasNextInt()) {
-						countMakes = kb.nextInt();
+					if (inputLine.length() == 3) {
+						countMakes = Integer.parseInt(inputs[2]);
 					} else {
 						countMakes = 1;
 					}
 					for (int i = 0; i < countMakes; i++) {
 						Critter.makeCritter(className);
 					}
-				} else if (input.equals("stats")) {
+				} else if (inputs[0].equals("stats")) {
 					try {
-						String crit = kb.next();
+						String crit = inputs[1];
 						Class<?> critterClass = Class.forName(myPackage + "." + crit);
 						java.util.List<Critter> critters = Critter.getInstances(myPackage + "." + crit);
 						try {

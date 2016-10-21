@@ -12,7 +12,7 @@ public class Params {
 	public  static int refresh_algae_count = (int)Math.max(1, world_width*world_height/1000);
 
 	public static  int photosynthesis_energy_amount = 1;
-	public static  int start_energy = 5; //100;
+	public static  int start_energy = 100;
 	
 
 

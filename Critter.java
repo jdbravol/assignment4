@@ -23,11 +23,11 @@ import java.util.List;
 
 public abstract class Critter {
 	private static String myPackage;
-	private	static List<Critter> population = new java.util.ArrayList<Critter>();
+	private	static List<Critter> livingCritters = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 	
 	// this hash set keeps track of all the critters alive at one time
-	public static HashSet<Critter> livingCritters = new HashSet<Critter>(0);		
+	//public static HashSet<Critter> livingCritters = new HashSet<Critter>(0);		
 	
 	// this matrix keeps track of critters at each specific location
 	public static Locations[][] locationMatrix = locationMatrixInit();
@@ -321,7 +321,7 @@ public abstract class Critter {
         if(!haveMoved){
             locationMatrix[this.y_coord][this.x_coord].inHere.remove(this);
         }
-        if(inFight && haveMoved){
+        if(inFight && !haveMoved){
             moveInFight(2, direction);
             locationMatrix[this.y_coord][this.x_coord].inHere.add(this);
             this.haveMoved = true;
@@ -377,7 +377,7 @@ public abstract class Critter {
             newCritter.x_coord = getRandomInt(Params.world_width);      				// sets random x axis
             newCritter.y_coord = getRandomInt(Params.world_height);     				// sets random y axis
             newCritter.energy = Params.start_energy;                        			// sets starting energy
-            livingCritters.add(newCritter);				                    			// adds to living hashset
+            livingCritters.add(0, newCritter);				                    			// adds to living hashset
             locationMatrix[newCritter.y_coord][newCritter.x_coord].inHere.add(newCritter);		// add new critter to contents of such location
 
         }
@@ -389,7 +389,6 @@ public abstract class Critter {
         } catch (IllegalAccessException e) {
             throw new InvalidCritterException(critter_class_name);
         }
-
     }
 	
 	/**
@@ -403,9 +402,9 @@ public abstract class Critter {
         try{
         	// dynamically create class:
             for (Critter maybeInstance: livingCritters){
-            Class givenCritter = Class.forName(critter_class_name);
+            Class givenCritter = Class.forName(myPackage + "." + critter_class_name);
                 if (givenCritter.isInstance(maybeInstance)) {
-                    result.add(maybeInstance);
+                    result.add(0, maybeInstance);
                  }
 
             }
@@ -485,7 +484,7 @@ public abstract class Critter {
 		 * implemented for grading tests to work.
 		 */
 		protected static List<Critter> getPopulation() {
-			return population;
+			return livingCritters;
 		}
 		
 		/*
@@ -533,7 +532,7 @@ public abstract class Critter {
         Critter newBaby;
         while(babyIterator.hasNext()){
         	newBaby = babyIterator.next();
-        	livingCritters.add(newBaby);
+        	livingCritters.add(0, newBaby);
         	locationMatrix[newBaby.y_coord][newBaby.x_coord].inHere.add(newBaby);
         }
         babies.clear();
@@ -568,7 +567,7 @@ public abstract class Critter {
 			newAlgae.energy = Params.start_energy;
 			newAlgae.x_coord = Critter.getRandomInt(Params.world_width);
 			newAlgae.y_coord = Critter.getRandomInt(Params.world_height);
-			livingCritters.add(newAlgae);
+			livingCritters.add(0, newAlgae);
 			locationMatrix[newAlgae.y_coord][newAlgae.x_coord].inHere.add(newAlgae);
 		}
 
